@@ -77,25 +77,37 @@ public class App extends JPanel implements ActionListener {
                 BufferedReader br = new BufferedReader(inputFile);
                 String line;
                 ArrayList<Double> timesTaken = new ArrayList<Double>();
+                ArrayList<int[]> allArrays = new ArrayList<int[]>();
                 while ((line = br.readLine()) != null) {
                     String[] words = line.split(" ");
                     int[] arr = new int[words.length];
                     for (int i = 0; i < words.length; i++) {
                         arr[i] = Integer.parseInt(words[i]);
                     }
-                    Thread t1;
+                    allArrays.add(arr);
+                }
+
+                ArrayList<Thread> allThreads = new ArrayList<Thread>();
+                for (int[] arr : allArrays) {
+                    Thread t;
                     if (sortingAlgo.equals("Bubble Sort")) {
-                        t1 = new BubbleSort(arr);
+                        t = new BubbleSort(arr);
                     } else if (sortingAlgo.equals("Merge Sort")) {
-                        t1 = new MergeSort(arr);
+                        t = new MergeSort(arr);
                     } else if (sortingAlgo.equals("Quick Sort")) {
-                        t1 = new QuickSort(arr);
+                        t = new QuickSort(arr);
                     } else {
-                        t1 = new SelectionSort(arr);
+                        t = new SelectionSort(arr);
                     }
-                    long startTime = System.currentTimeMillis();
-                    t1.start();
-                    t1.join();
+                    allThreads.add(t);
+                }
+
+                long startTime = System.currentTimeMillis();
+                for (Thread t : allThreads) {
+                    t.start();
+                }
+                for (Thread t : allThreads) {
+                    t.join();
                     long timeTaken = System.currentTimeMillis() - startTime;
                     timesTaken.add((double) timeTaken);
                 }
